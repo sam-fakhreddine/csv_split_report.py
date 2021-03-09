@@ -15,7 +15,7 @@ args = parser.parse_args()
 csv_file = args.file
 
 
-def make_owner_folders(date_time, filename="ownerslist.tsv", owners=[]):
+def make_owner_folders(date_time, filename="ownerslist.tsv"):
     """[summary]
 
     Args:
@@ -26,6 +26,8 @@ def make_owner_folders(date_time, filename="ownerslist.tsv", owners=[]):
     Returns:
         [type]: [description]
     """
+    owners=[]
+    logging.info("Making Owner Folders")
     os.makedirs(date_time)
     with open(filename, "r") as file:
         csv_reader = csv.reader(file, delimiter="\t")
@@ -35,10 +37,8 @@ def make_owner_folders(date_time, filename="ownerslist.tsv", owners=[]):
             if folder not in owners:
                 owners.append(folder)
     for owner in owners:
-        logging.info("Making Owner Folder: {}".format(os.path.join(date_time, owner)))
+        logging.debug("Making Owner Folder: {}".format(os.path.join(date_time, owner)))
         os.makedirs(os.path.join(date_time, owner))
-
-    return
 
 
 def owner_dict(filename="ownerslist.tsv"):
@@ -94,9 +94,6 @@ def pandas_make_files(date_path, df):
         # text_format = workbook.add_format({"text_wrap": True, "valign": "top"})
         idf = df.loc[(df["Host_Name"].astype(str) == i)]
         jdf = idf.loc[(df["CVSS_Score_"].astype(float) > cvss_score)]
-        jdf = pd.DataFrame(jdf)
-        columns = list(jdf.columns)
-        logging.debug(columns)
         logging.debug(jdf)
         jdf.to_excel(
             excel_writer=writer,
@@ -116,8 +113,12 @@ def get_encoding(file):
         result = chardet.detect(rawdata.read(10000))
     return result["encoding"]
 
+
 if __name__ == "__main__":
     """[summary]"""
     now = datetime.now()
+    logging.info(now)
     make_owner_folders(now.strftime("%Y%m%d"))
     pandas_make_files(now.strftime("%Y%m%d"), dataframe_generator(csv_file))
+    end = datetime.now()
+    logging.info(end)
