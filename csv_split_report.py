@@ -37,7 +37,7 @@ def make_owner_folders(date_time, filename="ownerslist.tsv"):
             if folder not in owners:
                 owners.append(folder)
     for owner in owners:
-        logging.debug("Making Owner Folder: {}".format(os.path.join(date_time, owner)))
+        logging.debug(f"Making Owner Folder: {os.path.join(date_time, owner)}")
         os.makedirs(os.path.join(date_time, owner))
 
 
